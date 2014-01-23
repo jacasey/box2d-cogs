@@ -7,9 +7,12 @@ import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
-import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.World;
+import org.jbox2d.dynamics.joints.RevoluteJoint;
+import org.jbox2d.dynamics.joints.RevoluteJointDef;
+
+import android.graphics.Color;
 
 public class GameWorld
 {
@@ -39,15 +42,9 @@ public class GameWorld
 		
 		world.setSleepingAllowed(true);
 
-//		Body gear1 = createCog(1.0f, 20, 0.1f, new Vec2(-2,0.2f));
-//		Body gear2 = createCog(1.8f, 36, 0.1f, new Vec2(0.83f,0));
-		Body gear3 = createCog(1.3f, 26, 0.1f, new Vec2(3.2f,2.1f));
-		
-		Fixture fixture = gear3.getFixtureList();
-		PolygonShape polygonShape = (PolygonShape) fixture.getShape();
-		
-		polygonShape.getVertices();
-		
+		Body gear1 = createCog(1.0f, 20, 0.1f, new Vec2(-2,0.2f), Color.RED);
+		Body gear2 = createCog(1.8f, 36, 0.1f, new Vec2(0.83f,0), Color.GREEN);
+		Body gear3 = createCog(1.3f, 26, 0.1f, new Vec2(3.2f,2.1f), Color.BLUE);
 		
 	    final float top = height/2f;
 		final float bottom = -top;
@@ -56,36 +53,36 @@ public class GameWorld
 		final float left = -right;
 		
 		Body ground = createWall(right, 0.01f , 0f, bottom,0);
-//		
-//		RevoluteJointDef jd1 = new RevoluteJointDef();
-//		jd1.bodyA = ground;
-//		jd1.bodyB = gear1;
-//		jd1.localAnchorA = ground.getLocalPoint(gear1.getWorldCenter());
-//		jd1.localAnchorB = gear1.getLocalPoint(gear1.getWorldCenter());
-//		jd1.referenceAngle = gear1.getAngle() - ground.getAngle();
-//		jd1.enableMotor = true;
-//		jd1.motorSpeed = 5f;
-//		jd1.maxMotorTorque = 1000000000;
-//		
-//		RevoluteJoint joint1 = (RevoluteJoint)world.createJoint(jd1);
-//		
-//		RevoluteJointDef jd2 = new RevoluteJointDef();
-//		jd2.bodyA = ground;
-//		jd2.bodyB = gear2;
-//		jd2.localAnchorA = ground.getLocalPoint(gear2.getWorldCenter());
-//		jd2.localAnchorB = gear2.getLocalPoint(gear2.getWorldCenter());
-//		jd2.referenceAngle = gear2.getAngle() - ground.getAngle();
-//
-//		RevoluteJoint joint2 = (RevoluteJoint)world.createJoint(jd2);
-//		
-//		RevoluteJointDef jd3 = new RevoluteJointDef();
-//		jd3.bodyA = ground;
-//		jd3.bodyB = gear3;
-//		jd3.localAnchorA = ground.getLocalPoint(gear3.getWorldCenter());
-//		jd3.localAnchorB = gear3.getLocalPoint(gear3.getWorldCenter());
-//		jd3.referenceAngle = gear3.getAngle() - ground.getAngle();
-//
-//		RevoluteJoint joint3 = (RevoluteJoint)world.createJoint(jd3);
+		
+		RevoluteJointDef jd1 = new RevoluteJointDef();
+		jd1.bodyA = ground;
+		jd1.bodyB = gear1;
+		jd1.localAnchorA = ground.getLocalPoint(gear1.getWorldCenter());
+		jd1.localAnchorB = gear1.getLocalPoint(gear1.getWorldCenter());
+		jd1.referenceAngle = gear1.getAngle() - ground.getAngle();
+		jd1.enableMotor = true;
+		jd1.motorSpeed = 3f;
+		jd1.maxMotorTorque = 1000000000;
+		
+		RevoluteJoint joint1 = (RevoluteJoint)world.createJoint(jd1);
+		
+		RevoluteJointDef jd2 = new RevoluteJointDef();
+		jd2.bodyA = ground;
+		jd2.bodyB = gear2;
+		jd2.localAnchorA = ground.getLocalPoint(gear2.getWorldCenter());
+		jd2.localAnchorB = gear2.getLocalPoint(gear2.getWorldCenter());
+		jd2.referenceAngle = gear2.getAngle() - ground.getAngle();
+
+		RevoluteJoint joint2 = (RevoluteJoint)world.createJoint(jd2);
+		
+		RevoluteJointDef jd3 = new RevoluteJointDef();
+		jd3.bodyA = ground;
+		jd3.bodyB = gear3;
+		jd3.localAnchorA = ground.getLocalPoint(gear3.getWorldCenter());
+		jd3.localAnchorB = gear3.getLocalPoint(gear3.getWorldCenter());
+		jd3.referenceAngle = gear3.getAngle() - ground.getAngle();
+
+		RevoluteJoint joint3 = (RevoluteJoint)world.createJoint(jd3);
 		
 //		GearJointDef jointDef = new GearJointDef();		
 //		jointDef.joint1 = joint1;
@@ -119,7 +116,7 @@ public class GameWorld
 		return body;
 	}
 	
-	private Body createCog(float r2, int teeth, float difference, Vec2 position)
+	private Body createCog(float r2, int teeth, float difference, Vec2 position, int color)
 	{
 		BodyDef cog = new BodyDef();
 		cog.type = BodyType.DYNAMIC;
@@ -132,7 +129,6 @@ public class GameWorld
 		float a0 =  PI /2f;		
 
 		ArrayList <Vec2> points = new ArrayList <Vec2> ();
-
 		
 		Body body = null;
         {
@@ -144,8 +140,6 @@ public class GameWorld
     		
 			for(int i = 0; i<teeth; i++)
 			{	
-				System.err.println(Math.toDegrees(a0));
-				
 				Vec2[] tooth = new Vec2[6];
 				
 				int vertex = 0;
@@ -211,7 +205,6 @@ public class GameWorld
 				PolygonShape toothShape = new PolygonShape();
 
 				toothShape.set(tooth, tooth.length);
-//				toothShape.m_vertices = tooth;
 				
 				FixtureDef toothFd = new FixtureDef();
 			    toothFd.shape = toothShape;
@@ -228,8 +221,6 @@ public class GameWorld
 				Vec2 point7 = new Vec2(x7,y7);
 				flat[2] = point7;
 				
-//				points.add(point7);
-				
 				PolygonShape flatShape = new PolygonShape();
 				flatShape.set(flat, flat.length);
 				
@@ -237,14 +228,12 @@ public class GameWorld
 				flatFd.shape = flatShape;
 				flatFd.density = 1.0f;
 				flatFd.friction = 0.8f;
-//				flatFd.userData = i;
-				
 				body.createFixture(flatFd);		
 				
 				a0 -= da;
 			}
         }
-        body.setUserData(points);
+        body.setUserData(new CogModel(points,color, teeth));
 		return body;
 	}
 
