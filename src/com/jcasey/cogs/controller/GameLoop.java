@@ -11,7 +11,6 @@ public class GameLoop extends Thread
 {
 	private boolean running = true;
 
-	
 	SurfaceHolder surfaceHolder;
 	GameView gameView;
 	GameWorld world;
@@ -60,5 +59,13 @@ public class GameLoop extends Thread
 	}
 	public Handler getHandler() {
 		return handler;
+	}
+	
+	public boolean isRunning() {
+		return running;
+	}
+
+	public void setRunning(boolean running) {
+		this.running = running;
 	}
 }

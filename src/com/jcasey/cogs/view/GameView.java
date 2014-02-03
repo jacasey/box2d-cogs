@@ -160,8 +160,21 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, OnT
 
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
-		// TODO Auto-generated method stub
-
+		boolean retry = true;
+		
+		gameLoop.setRunning(false);
+		while(retry)
+		{
+			try
+			{
+				gameLoop.join();
+				retry = false;
+			}
+			catch(InterruptedException e)
+			{
+				
+			}
+		}
 	}
 
 	Body selected = null;
