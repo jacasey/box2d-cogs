@@ -1,6 +1,7 @@
 package com.jcasey.cogs.controller;
 
 import android.graphics.Canvas;
+import android.os.Handler;
 import android.view.SurfaceHolder;
 
 import com.jcasey.cogs.model.GameWorld;
@@ -14,7 +15,8 @@ public class GameLoop extends Thread
 	SurfaceHolder surfaceHolder;
 	GameView gameView;
 	GameWorld world;
-	
+	Handler handler = null;
+		
 	public GameLoop(GameWorld world, SurfaceHolder surfaceHolder,GameView gameView)
 	{		
 		super("GameLoop");
@@ -22,12 +24,15 @@ public class GameLoop extends Thread
 		this.world = world;
 		this.surfaceHolder = surfaceHolder;
 		this.gameView = gameView;
+		
+		
 	}
+	
 	public void run()
 	{
 		Canvas canvas = null;
 		while(running)
-		{
+		{		
 			world.step();
 						
 			try
@@ -52,5 +57,8 @@ public class GameLoop extends Thread
 				e.printStackTrace();
 			}
 		}
+	}
+	public Handler getHandler() {
+		return handler;
 	}
 }

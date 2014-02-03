@@ -16,7 +16,7 @@ import android.graphics.Color;
 
 public class GameWorld
 {
-	private World world;
+	public World world;
 	
 	private float timeStep;
 	private int velocityIterations;
@@ -28,6 +28,8 @@ public class GameWorld
 	private float height;
 	
 	final float PI = (float) Math.PI;
+	
+	ArrayList <Body> cogs = new ArrayList <Body>();
 	
 	public GameWorld(float width, float height)
 	{
@@ -46,6 +48,10 @@ public class GameWorld
 		Body gear2 = createCog(1.8f, 36, 0.1f, new Vec2(0.83f,0), Color.GREEN);
 		Body gear3 = createCog(1.3f, 26, 0.1f, new Vec2(3.2f,2.1f), Color.BLUE);
 		
+		cogs.add(gear1);
+		cogs.add(gear2);
+		cogs.add(gear3);
+		
 	    final float top = height/2f;
 		final float bottom = -top;
 	    
@@ -60,9 +66,9 @@ public class GameWorld
 		jd1.localAnchorA = ground.getLocalPoint(gear1.getWorldCenter());
 		jd1.localAnchorB = gear1.getLocalPoint(gear1.getWorldCenter());
 		jd1.referenceAngle = gear1.getAngle() - ground.getAngle();
-		jd1.enableMotor = true;
-		jd1.motorSpeed = 3f;
-		jd1.maxMotorTorque = 1000000000;
+		jd1.enableMotor = false;
+		jd1.motorSpeed = 0f;
+		jd1.maxMotorTorque = 10;
 		
 		RevoluteJoint joint1 = (RevoluteJoint)world.createJoint(jd1);
 		
@@ -72,7 +78,8 @@ public class GameWorld
 		jd2.localAnchorA = ground.getLocalPoint(gear2.getWorldCenter());
 		jd2.localAnchorB = gear2.getLocalPoint(gear2.getWorldCenter());
 		jd2.referenceAngle = gear2.getAngle() - ground.getAngle();
-
+		jd2.maxMotorTorque = 10;
+		
 		RevoluteJoint joint2 = (RevoluteJoint)world.createJoint(jd2);
 		
 		RevoluteJointDef jd3 = new RevoluteJointDef();
@@ -81,7 +88,8 @@ public class GameWorld
 		jd3.localAnchorA = ground.getLocalPoint(gear3.getWorldCenter());
 		jd3.localAnchorB = gear3.getLocalPoint(gear3.getWorldCenter());
 		jd3.referenceAngle = gear3.getAngle() - ground.getAngle();
-
+		jd3.maxMotorTorque = 10;
+		
 		RevoluteJoint joint3 = (RevoluteJoint)world.createJoint(jd3);
 		
 //		GearJointDef jointDef = new GearJointDef();		
@@ -112,7 +120,7 @@ public class GameWorld
 	    
 	    Body body = world.createBody(bd);
 		body.createFixture(groundFixture);
-		
+		body.setUserData("ground");
 		return body;
 	}
 	
@@ -203,14 +211,14 @@ public class GameWorld
 				y7 = (float) (r0 * Math.sin(b0));
 				
 				PolygonShape toothShape = new PolygonShape();
-
 				toothShape.set(tooth, tooth.length);
 				
 				FixtureDef toothFd = new FixtureDef();
 			    toothFd.shape = toothShape;
 			    toothFd.density = 1.0f;
 			    toothFd.friction = 0.8f;
-			    toothFd.userData = i;
+			    toothFd.userData = body;
+			    
 			    
 	
 				body.createFixture(toothFd);
@@ -228,12 +236,17 @@ public class GameWorld
 				flatFd.shape = flatShape;
 				flatFd.density = 1.0f;
 				flatFd.friction = 0.8f;
+				flatFd.userData = body;
+				
 				body.createFixture(flatFd);		
 				
 				a0 -= da;
 			}
         }
         body.setUserData(new CogModel(points,color, teeth));
+        
+        body.setAngularDamping(0.2f);
+        
 		return body;
 	}
 
@@ -251,9 +264,13 @@ public class GameWorld
 	}
 
 	public Body getBodyList() {
-//		synchronized(world)
+		synchronized(world)
 		{
 			return world.getBodyList();
 		}
+	}
+
+	public ArrayList<Body> getCogs() {
+		return cogs;
 	}
 }
