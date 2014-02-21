@@ -31,6 +31,7 @@ import com.jcasey.cogs.model.CogModel;
 import com.jcasey.cogs.model.GameWorld;
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback, OnTouchListener {
+	public static final int SCREEN_DIAGONAL_METRES = 12;
 	GameLoop gameLoop;
 	GameWorld world;
 
@@ -142,6 +143,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, OnT
 
 	float scaledWidth = 0;
 	float width = 0;
+	float height = 0;
 	float scaledHeight = 0;
 
 	@Override
@@ -149,8 +151,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback, OnT
 		Rect surfaceFrame = holder.getSurfaceFrame();
 
 		width = surfaceFrame.width();
+		height = surfaceFrame.height();
+		
+		float hyp = (float) Math.sqrt((width*width + height*height)); // get screen diagonal
+		
+		scale = SCREEN_DIAGONAL_METRES / hyp;
+		
 		scaledWidth = width * scale;
-		scaledHeight = surfaceFrame.height() * scale;
+		scaledHeight = height * scale;
 
 		world = new GameWorld(scaledWidth, scaledHeight);
 
