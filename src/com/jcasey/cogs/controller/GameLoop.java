@@ -39,7 +39,10 @@ public class GameLoop extends Thread
 				canvas = surfaceHolder.lockCanvas();
 				synchronized (surfaceHolder)
 				{
-					gameView.render(canvas);
+					if(canvas != null)
+					{
+						gameView.render(canvas);
+					}
 				}
 			}
 			finally
